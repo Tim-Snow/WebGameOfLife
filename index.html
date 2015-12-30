@@ -7,6 +7,7 @@
 		<title>Game of Life.</title>
 		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>	
+		<script type="text/javascript" src="js/interface.js"></script>	
 	</head>
 	
 	<div class="container">
@@ -14,4 +15,21 @@
 		</canvas>
 	</div>
 	
+	<div id="ui">
+		Grid Enabled: <input type="checkbox" id="gridOn" name="gridOn" value="1" style="float:right" unchecked><p>
+		Grid Rows: 	<input type="text" name="rows"  size="1" value="60"  style="float:right" onChange="changeRows()"><p>
+		Grid Cols: 	<input type="text" name="cols"  size="1" value="100" style="float:right" onChange="changeCols()"><p>
+		Speed: 		<input type="text" name="speed" size="1" value="1.0" style="float:right" onChange="changeSpeed()">
+			
+		<div id="startbutton">
+			<center>Start</center>
+		</div>
+		<div id="stepbutton">
+			<center>Step</center>
+		</div>
+		<div id="hidebutton">
+			<center>Hide UI</center>
+		</div>
+	</div>
+
 </html>
