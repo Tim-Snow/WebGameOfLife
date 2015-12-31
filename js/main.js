@@ -5,13 +5,13 @@ var uiShown;
 var rowSpacing, colSpacing
 var gridEnabled;
 
-var gridColumns = 5;
+var gridColumns = 15;
 var gridRows 	= 5;
 var speed 		= 1.0;
 var grid 		= new Array();
 var gridStore 	= new Array();
 
-cell = function(alive){
+function Cell(alive){
 	this.alive 	= alive;
 }
 
@@ -23,16 +23,11 @@ $(document).ready(function() {
 	context = canvas.getContext('2d');
 	
 	grid = createGrid(gridRows, gridColumns);
-	/*for(var i = 0; i < gridColumns; i++){
-		grid[i] = new Array();
-		
-		for(var j = 0; j < gridRows; j++){
-			grid[i][j] = new cell(0);
-		}
-	}*/
+	//gridStore = grid.slice(0);
 	
 	uiShown = true;
 	state   = 0;
+	gridEnabled = 1;
 	
 	$("#hidebutton").click(function() {
 		if(uiShown){
@@ -85,7 +80,7 @@ function draw(){
 	//Draw cells
 	for(var i = 0; i < gridColumns; i++){
 		for(var j = 0; j < gridRows; j++){
-			if(grid[i][j].alive == 1){
+			if(grid[j][i].alive == 1){
 				context.fillRect( colSpacing * i, rowSpacing * j, colSpacing, rowSpacing);
 			}
 		}
@@ -131,62 +126,87 @@ function updateCells(){
 
 }
 
-function createGrid(x, y, existingGrid){
-	var r = new Array();
+function createGrid(r, c){
+	var ar = new Array();
 	
-	for(var i = 0; i < y; i++){
-		r[i] = new Array();
+	for(var i = 0; i < r; i++){
+		ar[i] = new Array();
 		
-		for(var j = 0; j < x; j++){
-			if(existingGrid != undefined){
-				r[i][j] = new cell(existingGrid[i][j].alive);
-			} else {
-				r[i][j] = new cell(0);
-			}
+		for(var j = 0; j < c; j++){
+			ar[i][j] = new Cell(0);
+			ar[i][j].alive = 0;
 		}
 	}
 	
+	return ar;
+}
+
+function resizeGrid(existingGrid, newR, newC){
+	var r = new Array();
 	
+	r =  createGrid(newC, newR);
+	console.log(r);
+
+	for(var i = 0; i < newR; i++){		
+		for(var j = 0; j < newC; j++){
+			if(existingGrid[i][j] == null){
+				r[i][j].alive = 0;
+			} else {
+				r[i][j].alive = existingGrid[i][j].alive;
+			}
+		}
+	}
+
+	/*var r = existingGrid.splice(0, newR);
+	
+	for(var i = 0; i < newR; i++){
+		r[i] = existingGrid.splice(0, newC);
+	}
+	
+	for(var i = 0; i < newR; i++){		
+		for(var j = 0; j < newC; j++){
+			r[i][j] = new Cell(1);
+		}
+	}*/
+
 	return r;
 }
 
 function changeRows(){
-	/*console.log(grid);
-	gridRows = $("input#rows").val();
-	gridStore = createGrid(gridRows, gridColumns, grid);
-	console.log(gridStore);
+	gridRows = $("#gRows").val();
 	grid = new Array();
-	grid = cloneArray(gridStore);
-	console.log(grid);
-	draw();*/
-	//create new grid and copy values
-	//redraw
-	//same for next 2 funcs
+	grid = createGrid(gridRows, gridColumns);
+	draw();
 }
 
 function changeCols(){
-	gridColumns = $("input#cols").val();
+	gridColumns = $("#gCols").val();
+	grid = new Array();
+	grid = createGrid(gridRows, gridColumns);
+	draw();
 }
 
 function changeSpeed(){
-	speed = $("input#speed").val();
+	speed = $("#speed").val();
 }
 
-function cloneArray(array){
+function cloneArray(array, newR, newC){
 	var copy = array.slice(0);
 	
 	for(var i = 0; i < copy.length; i++){
 		copy[i] = cloneArray(copy[i]);
 	}
+	
 	return copy;
 }
 
-function killCell(x, y){
-	grid[x][y].alive = 0;
+function killCell(r, c){
+	grid[r][c].alive = 0;
 }
 
-function createCell(x, y){
-	grid[x][y].alive = 1;
+function createCell(r, c){
+	grid[r][c].alive = 1;
+	console.log("Cell created - Row: " + r + " Column: " + c);
 }
 
 function getClickPos(event){
@@ -208,15 +228,16 @@ function getClickPos(event){
 	y = Math.ceil(y/rowSpacing) - 1;
 	
 	if(state == 0){
-		clickGrid(x, y);
+		clickGrid(y, x);
+		console.log("Click - Row:" + y + " Column:" + x);
 	}
 }
 
-function clickGrid(x, y){
-	if(grid[x][y].alive == 0){
-			createCell(x, y);
+function clickGrid(r, c){
+	if(grid[r][c].alive == 0){
+			createCell(r, c);
 		} else {
-			killCell(x, y);
+			killCell(r, c);
 		}
 		draw();
 }
