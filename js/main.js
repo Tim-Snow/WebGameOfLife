@@ -1,15 +1,14 @@
-//include preset shapes such as in wiki? https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Examples_of_patterns
 var width, height, canvas, context;
-var state; //0 = init 1 = simulate
+var state;
 var uiShown;
 var rowSpacing, colSpacing
-var gridEnabled;
 
-var gridColumns = 15;
-var gridRows 	= 5;
-var speed 		= 1.0;
+var gridEnabled = 0;
+var gridColumns = 100;
+var gridRows 	= 60;
+var speed 		= 100; //change to slider
 var grid 		= new Array();
-var gridStore 	= new Array();
+var nextState	= new Array();
 
 function Cell(alive){
 	this.alive 	= alive;
@@ -20,14 +19,11 @@ $(document).ready(function() {
     height 		= $(window).height();
 	canvas 		= $("#c")[0];
 	$("#c").attr({width:width,height:height})
-	context = canvas.getContext('2d');
+	context 	= canvas.getContext('2d');
 	
-	grid = createGrid(gridRows, gridColumns);
-	//gridStore = grid.slice(0);
-	
-	uiShown = true;
-	state   = 0;
-	gridEnabled = 1;
+	grid 		= createGrid(gridRows, gridColumns);
+	uiShown 	= true;
+	state   	= 0;
 	
 	$("#hidebutton").click(function() {
 		if(uiShown){
@@ -37,6 +33,16 @@ $(document).ready(function() {
 			$("#ui").animate({ left: '0%', opacity: 1.0}, 500 );
 			uiShown = true;
 		}
+	});
+	
+	$("#templates-min").click(function() {
+		$("#templates-min").css("visibility","hidden");
+		$("#templates-max").css("visibility","visible");
+	});
+	
+	$("#templates-max").click(function() {
+		$("#templates-max").css("visibility","hidden");
+		$("#templates-min").css("visibility","visible");
 	});
 
 	canvas.addEventListener("mousedown", getClickPos, false);
@@ -49,7 +55,6 @@ $(document).ready(function() {
     });
 	
 	draw();
-	mainLoop();
 });
 
 function draw(){
@@ -87,43 +92,73 @@ function draw(){
 	}
 }
 
-function mainLoop(){	
-	if(state == 1){
-	//loop at speed determined from text box
-		for(var i = 0; i < gridColumns; i++){
-			for(var j = 0; i < gridRows; j++){
-				checkRules(i, j);
-			}
-		}
-		
-		updateCells();
+function start(){
+	if(state !== 1){
+		state = 1;
+		console.log(speed);
+		var interval = 1000 - speed;
+		$("#startbutton").css("background-color", "#55AA55");
+		setInterval(function mainLoop() { if(state == 1){stepLogic();} }, interval);
 	}
 }
 
-function checkRules(x, y){
-	var numAliveSurrounding = 0;
+function stop(){
+	$("#startbutton").css("background-color", "#000000");
+	state = 0;
+}
+
+function stepLogic(){
 	
-	//PAUSE STATE e.g. do not alter cells this stage
-	//check status of surrounding cells
-	//
-	//	x-1y-1	y-1		x+1y-1
-	//	x-1		c		x+1
-	//	x-1y+1	y+1		x+1y+1
-	//
-	//	Check that boundaries will be taken in to consideration
-	//
-	//Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-	//if(numAliveSurrounding < 2) store state dead
-	//Any live cell with two or three live neighbours lives on to the next generation.
-	//if(numAliveSurrounding == 2) store state alive if already alive
-	//Any live cell with more than three live neighbours dies, as if by over-population.
-	//if(numAliveSurrounding > 3) store state dead
-	//Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-	//if(numAliveSurrounding == 3) store state alive
+	nextState = new Array();
+	nextState 	= createGrid(gridRows, gridColumns);
+	
+	for(var r = 0; r < gridRows; r++){
+		for(var c = 0; c < gridColumns; c++){	
+			checkRules(r, c);
+		}
+	}
+	
+	updateCells();
+	draw();
+}
+
+function checkRules(r, c){
+	var numAliveSurrounding = 0;
+	nextState[r][c].alive = 0;
+	
+	for(var i = -1; i < 2; i++){
+		for(var j = -1; j < 2; j++){
+			if(r + i >= 0 && r + i < grid.length){
+				if(c + j >= 0 && c + j < gridColumns){
+					if(i == 0 && j == 0){} else {
+						if(grid[(r+i)][(c+j)].alive == 1){
+							numAliveSurrounding += 1;
+						}
+					}
+				}
+			}
+		}
+	}
+			
+	if(grid[r][c].alive === 0){
+		if(numAliveSurrounding === 3){
+			nextState[r][c].alive = 1;
+		} else {
+			nextState[r][c].alive = 0;
+		}
+	} else {
+		if(numAliveSurrounding === 2 || numAliveSurrounding === 3){
+			nextState[r][c].alive = 1;
+		} else {
+			nextState[r][c].alive = 0;
+		}
+	}
 }
 
 function updateCells(){
-
+	grid = new Array();
+	grid = nextState;
+	draw();
 }
 
 function createGrid(r, c){
@@ -141,41 +176,11 @@ function createGrid(r, c){
 	return ar;
 }
 
-function resizeGrid(existingGrid, newR, newC){
-	var r = new Array();
-	
-	r =  createGrid(newC, newR);
-	console.log(r);
-
-	for(var i = 0; i < newR; i++){		
-		for(var j = 0; j < newC; j++){
-			if(existingGrid[i][j] == null){
-				r[i][j].alive = 0;
-			} else {
-				r[i][j].alive = existingGrid[i][j].alive;
-			}
-		}
-	}
-
-	/*var r = existingGrid.splice(0, newR);
-	
-	for(var i = 0; i < newR; i++){
-		r[i] = existingGrid.splice(0, newC);
-	}
-	
-	for(var i = 0; i < newR; i++){		
-		for(var j = 0; j < newC; j++){
-			r[i][j] = new Cell(1);
-		}
-	}*/
-
-	return r;
-}
-
 function changeRows(){
 	gridRows = $("#gRows").val();
 	grid = new Array();
 	grid = createGrid(gridRows, gridColumns);
+	nextState = createGrid(gridRows, gridColumns);
 	draw();
 }
 
@@ -183,21 +188,17 @@ function changeCols(){
 	gridColumns = $("#gCols").val();
 	grid = new Array();
 	grid = createGrid(gridRows, gridColumns);
+	nextState = createGrid(gridRows, gridColumns);
 	draw();
 }
 
 function changeSpeed(){
-	speed = $("#speed").val();
-}
-
-function cloneArray(array, newR, newC){
-	var copy = array.slice(0);
-	
-	for(var i = 0; i < copy.length; i++){
-		copy[i] = cloneArray(copy[i]);
+	if($("#speed").val() > 999){
+		speed = 999;
+		$("#speed").val("999");
+	} else {
+		speed = $("#speed").val();
 	}
-	
-	return copy;
 }
 
 function killCell(r, c){
@@ -206,7 +207,6 @@ function killCell(r, c){
 
 function createCell(r, c){
 	grid[r][c].alive = 1;
-	console.log("Cell created - Row: " + r + " Column: " + c);
 }
 
 function getClickPos(event){
@@ -229,7 +229,20 @@ function getClickPos(event){
 	
 	if(state == 0){
 		clickGrid(y, x);
-		console.log("Click - Row:" + y + " Column:" + x);
+	}
+}
+
+function cloneArray(array){
+	if(Array.isArray(array)){
+		var copy = array.slice(0);
+		
+		for(var i = 0; i < copy.length; i++){
+			for(var j = 0; j < copy[i].length; j++){
+				copy[i][j] = new Cell(array[i][j].alive);
+
+			}
+		}
+		return copy;
 	}
 }
 
@@ -239,6 +252,7 @@ function clickGrid(r, c){
 		} else {
 			killCell(r, c);
 		}
+
 		draw();
 }
 

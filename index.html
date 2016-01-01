@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en"> 
-
 	<head>
 		<meta charset="utf-8"/>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<title>Game of Life.</title>
 		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>	
-		<script type="text/javascript" src="js/interface.js"></script>	
+		<!--<script type="text/javascript" src="js/interface.js"></script>	-->
 	</head>
 	
 	<div class="container">
@@ -16,20 +15,51 @@
 	</div>
 	
 	<div id="ui">
-		Grid Enabled: <input type="checkbox" id="gridOn" name="gridOn" value="1" style="float:right" unchecked><p>
-		Grid Rows: 	<input type="text"		 id="gRows" name="rows"  size="1" value="60"  style="float:right" onChange="changeRows()"><p>
-		Grid Cols: 	<input type="text" 		 id="gCols" name="cols"  size="1" value="100" style="float:right" onChange="changeCols()"><p>
-		Speed: 		<input type="text"  	 id="speed" name="speed" size="1" value="1.0" style="float:right" onChange="changeSpeed()">
+		Grid Enabled: 					<input type="checkbox" 	id="gridOn" name="gridOn" 		  value="1"   style="float:right" unchecked><p>
+		Grid Rows: 						<input type="text"		 id="gRows" name="rows"  size="1" value="60"  style="float:right" onChange="changeRows()"><p>
+		Grid Cols: 						<input type="text" 		 id="gCols" name="cols"  size="1" value="100" style="float:right" onChange="changeCols()"><p>
+		Speed:<small>(1-1000)</small>	<input type="text"  	 id="speed" name="speed" size="1" value="100" style="float:right" onChange="changeSpeed()">
 			
 		<div id="startbutton">
-			<center>Start</center>
+			<center>
+				<button class="but" name="startBut" onclick="start()">
+					Start
+				</button>
+			</center>
+		</div>
+		<div id="stopbutton">
+			<center>
+				<button class="but" name="stopBut" onclick="stop()">
+					Stop
+				</button>
+			</center>
 		</div>
 		<div id="stepbutton">
-			<center>Step</center>
+			<center>
+				<button class="but" name="stepBut" onclick="stepLogic()">
+					Step
+				</button>
+			</center>
 		</div>
 		<div id="hidebutton">
-			<center>Hide UI</center>
+			<center>
+				Hide UI
+			</center>
 		</div>
+		
+		<center>
+			<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">
+				About
+			</a>
+		</center>
+	</div>
+	
+	<div id="templates-min">
+		^^^ TEMPLATES ^^^
+	</div>
+	
+	<div id="templates-max">
+	
 	</div>
 
 </html>
