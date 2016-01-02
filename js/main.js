@@ -3,6 +3,7 @@ var state;
 var uiShown;
 var rowSpacing, colSpacing
 
+var nextClick	= 0;
 var gridEnabled = 0;
 var gridColumns = 100;
 var gridRows 	= 60;
@@ -176,6 +177,65 @@ function createGrid(r, c){
 	return ar;
 }
 
+function clearGrid(){
+	grid = new Array();
+	grid = createGrid(gridRows, gridColumns);
+	nextState = createGrid(gridRows, gridColumns);
+	draw();
+}
+
+//////////////////////
+function useTemplate(type){
+	switch(type){
+		case 1:
+			nextClick = "Block";
+			console.log(nextClick);
+			break;
+		case 2:
+			nextClick = "Beehive";
+			console.log(nextClick);
+			break;
+		case 3:
+			nextClick = "Loaf";
+			console.log(nextClick);
+			break;
+		case 4:
+			nextClick = "Boat";
+			console.log(nextClick);
+			break;
+		case 5:
+			nextClick = "Blinker";
+			console.log(nextClick);
+			break;
+		case 6:
+			nextClick = "Toad";
+			console.log(nextClick);
+			break;
+		case 7:
+			nextClick = "Beacon";
+			console.log(nextClick);
+			break;
+		case 8:
+			nextClick = "Pulsar";
+			console.log(nextClick);
+			break;
+		case 9:
+			nextClick = "I-Column";
+			console.log(nextClick);
+			break;
+		case 10:
+			nextClick = "Glider";
+			console.log(nextClick);
+			break;
+		case 11:
+			nextClick = "Lightweight spaceship";
+			console.log(nextClick);
+			break;
+		default:
+			break;
+	}
+}
+
 function changeRows(){
 	gridRows = $("#gRows").val();
 	grid = new Array();
@@ -247,13 +307,162 @@ function cloneArray(array){
 }
 
 function clickGrid(r, c){
+	switch(nextClick){
+		case 0:
+		toggleCell(r,c);
+			break;
+		case "Block":
+			createCell(r,c);
+			createCell(r,c+1);
+			createCell(r+1,c);
+			createCell(r+1,c+1);		
+			break;
+		case "Beehive":
+			createCell(r,c+1);
+			createCell(r,c+2);
+			createCell(r+1,c);
+			createCell(r+1,c+3);
+			createCell(r+2,c+1);
+			createCell(r+2,c+2);
+			break;
+		case "Loaf":
+			createCell(r,c+1);
+			createCell(r,c+2);
+			createCell(r+1,c);
+			createCell(r+1,c+3);
+			createCell(r+2,c+1);
+			createCell(r+2,c+3);
+			createCell(r+3,c+2);
+			break;
+		case "Boat":
+			createCell(r,c);
+			createCell(r,c+1);
+			createCell(r+1,c);
+			createCell(r+1,c+2);
+			createCell(r+2,c+1);
+			break;
+		case "Blinker":
+			createCell(r,c);
+			createCell(r,c+1);
+			createCell(r,c+2);
+			break;
+		case "Toad":
+			createCell(r,c+1);
+			createCell(r,c+2);
+			createCell(r,c+3);
+			createCell(r+1,c);
+			createCell(r+1,c+1);
+			createCell(r+1,c+2);
+			break;
+		case "Beacon":
+			createCell(r,c);
+			createCell(r,c+1);
+			createCell(r+1,c);
+			createCell(r+1,c+1);
+			createCell(r+2,c+2);
+			createCell(r+2,c+3);
+			createCell(r+3,c+2);
+			createCell(r+3,c+3);			
+			break;
+		case "Pulsar":
+			createCell(r,c+2);
+			createCell(r,c+3);
+			createCell(r,c+4);
+			createCell(r,c+8);
+			createCell(r,c+9);
+			createCell(r,c+10);
+			createCell(r+2,c);
+			createCell(r+3,c);
+			createCell(r+4,c);
+			createCell(r+2,c+5);
+			createCell(r+2,c+7);
+			createCell(r+2,c+12);
+			createCell(r+3,c+5);
+			createCell(r+3,c+7);
+			createCell(r+3,c+12);
+			createCell(r+4,c+5);
+			createCell(r+4,c+7);
+			createCell(r+4,c+12);
+			createCell(r+5,c+2);
+			createCell(r+5,c+3);
+			createCell(r+5,c+4);
+			createCell(r+5,c+8);
+			createCell(r+5,c+9);
+			createCell(r+5,c+10);
+			createCell(r+7,c+2);
+			createCell(r+7,c+3);
+			createCell(r+7,c+4);
+			createCell(r+7,c+8);
+			createCell(r+7,c+9);
+			createCell(r+7,c+10);
+			createCell(r+8,c);
+			createCell(r+8,c+5);
+			createCell(r+8,c+7);
+			createCell(r+8,c+12);
+			createCell(r+9,c);
+			createCell(r+9,c+5);
+			createCell(r+9,c+7);
+			createCell(r+9,c+12);
+			createCell(r+10,c);
+			createCell(r+10,c+5);
+			createCell(r+10,c+7);
+			createCell(r+10,c+12);
+			createCell(r+12,c+2);
+			createCell(r+12,c+3);
+			createCell(r+12,c+4);
+			createCell(r+12,c+8);
+			createCell(r+12,c+9);
+			createCell(r+12,c+10);
+			break;
+		case "I-Column":
+			createCell(r,c+1);
+			createCell(r+1,c+1);
+			createCell(r+2,c);
+			createCell(r+2,c+2);
+			createCell(r+3,c+1);
+			createCell(r+4,c+1);
+			createCell(r+5,c+1);
+			createCell(r+6,c+1);
+			createCell(r+7,c);
+			createCell(r+7,c+2);
+			createCell(r+8,c+1);
+			createCell(r+9,c+1);
+			break;
+		case "Glider":
+			createCell(r,c+2);
+			createCell(r+1,c+2);
+			createCell(r+2,c+2);
+			createCell(r+2,c+1);
+			createCell(r+1,c);
+			break;
+		case "Lightweight spaceship":
+			createCell(r,c+1);
+			createCell(r,c+2);
+			createCell(r+1,c);
+			createCell(r+1,c+1);
+			createCell(r+1,c+2);
+			createCell(r+1,c+3);
+			createCell(r+2,c);
+			createCell(r+2,c+1);
+			createCell(r+2,c+3);
+			createCell(r+2,c+4);
+			createCell(r+3,c+2);
+			createCell(r+3,c+3);
+			break;
+		default:
+			break;
+	}
+	
+	nextClick = 0;
+	draw();
+}
+
+function toggleCell(r, c){
 	if(grid[r][c].alive == 0){
 			createCell(r, c);
 		} else {
 			killCell(r, c);
 		}
-
-		draw();
 }
 
 function onWindowResize(){
